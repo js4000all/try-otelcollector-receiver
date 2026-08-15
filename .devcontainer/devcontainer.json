@@ -1,0 +1,25 @@
+{
+	"name": "Golang dev env",
+	"dockerComposeFile": [
+		"../compose.yml"
+	],
+	"service": "dev",
+	"workspaceFolder": "/work",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"golang.Go"
+			],
+			"settings": {
+				"terminal.integrated.profiles.linux": {
+					"ash (login)": {
+						"path": "ash",
+						"args": ["-l"]
+					}
+				},
+				"terminal.integrated.defaultProfile.linux": "ash (login)"				
+			}
+		}
+	},
+	"remoteUser": "dev"
+}
