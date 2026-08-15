@@ -1,0 +1,14 @@
+receivers:
+  practice:
+    collection_interval: 5s
+
+exporters:
+  debug:
+    verbosity: detailed
+
+service:
+  pipelines:
+    metrics:
+      receivers: [practice]
+      exporters: [debug]
+      

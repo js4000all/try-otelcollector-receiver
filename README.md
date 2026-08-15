@@ -21,3 +21,8 @@ ocb --config builder-config.yaml
 
 `builder-config.yaml`で指定した出力先に、カスタムcollectorのバイナリができる。
 
+## 動かす
+
+```sh
+./dist/otelcol-practice --config collector-config.yaml
+```
