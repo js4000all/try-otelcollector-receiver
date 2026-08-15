@@ -1,15 +1,18 @@
-FROM golang:alpine
+FROM golang:latest
 LABEL version="0.1.0" maintainer="js4000all@gmail.com"
 
 RUN set -x \
-  && apk update --no-cache \
-  && apk upgrade --no-cache \
-  && apk add --no-cache \
+  && apt-get update \
+  && apt-get upgrade -y \
+  && apt-get install -y --no-install-recommends \
     git \
     less \
     vim \
     curl \
-  && adduser --disabled-password dev
+    ca-certificates \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+RUN useradd -m -s /bin/bash dev
 
 COPY ./profile.d/alias.sh /etc/profile.d
 
