@@ -1,0 +1,14 @@
+dist:
+  module: github.com/yourname/otel-practice/dist
+  name: otelcol-practice
+  description: Practice OpenTelemetry Collector
+  output_path: ./dist
+
+receivers:
+  - gomod: github.com/yourname/otel-practice v0.0.0
+    import: github.com/yourname/otel-practice/practicereceiver
+    path: .
+
+exporters:
+  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.158.0
+  
