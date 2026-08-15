@@ -4,11 +4,16 @@ receivers:
 
 exporters:
   debug:
-    verbosity: detailed
+    verbosity: normal
+    use_internal_logger: false
+    output_paths:
+      - stdout
 
 service:
   pipelines:
     metrics:
       receivers: [practice]
       exporters: [debug]
-      
+  telemetry:
+    logs:
+      level: error
