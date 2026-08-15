@@ -26,3 +26,39 @@ ocb --config builder-config.yaml
 ```sh
 ./dist/otelcol-practice --config collector-config.yaml
 ```
+
+## VictoriaMetricsに送信するようにする
+
+`builder-config.yaml`でexporterを追加する。
+
+```yaml:builder-config.yaml
+exporters:
+  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.158.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.158.0
+```
+
+`collector-config.yaml`に`otlphttpexporter`用の設定を追加する。
+
+```yaml:collector-config.yaml
+exporters:
+  debug:
+    verbosity: normal
+    use_internal_logger: false
+    output_paths:
+      - stdout
+  otlphttp/vmetrics:
+    endpoint: http://vm:8428/opentelemetry
+
+service:
+  pipelines:
+    metrics:
+      receivers: [practice]
+      exporters:
+        - debug
+        - otlphttp/vmetrics
+```
+
+値を取得してみる。
+```sh
+curl 'vm:8428/api/v1/export' --data-urlencode 'match[]=practice.value' --data-urlencode 'start=-10m'
+```

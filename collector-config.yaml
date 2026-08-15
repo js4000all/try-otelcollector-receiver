@@ -8,12 +8,16 @@ exporters:
     use_internal_logger: false
     output_paths:
       - stdout
+  otlphttp/vmetrics:
+    endpoint: http://vm:8428/opentelemetry
 
 service:
   pipelines:
     metrics:
       receivers: [practice]
-      exporters: [debug]
+      exporters:
+        - debug
+        - otlphttp/vmetrics
   telemetry:
     logs:
       level: error
