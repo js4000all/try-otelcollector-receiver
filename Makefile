@@ -1,9 +1,12 @@
-.PHONY: build build-amd64 build-arm64 clean
+.PHONY: test build build-amd64 build-arm64 clean
 
 DIST_NAME := ./dist/otelcol-practice
 VERSION := 0.1.0
-		
-build: build-amd64 build-arm64
+
+test:
+	go test ./...
+
+build: test build-amd64 build-arm64
 
 build-amd64:
 	GOOS=linux GOARCH=amd64 ocb --config builder-config.yaml
