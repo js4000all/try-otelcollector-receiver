@@ -62,3 +62,81 @@ service:
 ```sh
 curl 'vm:8428/api/v1/export' --data-urlencode 'match[]=practice.value' --data-urlencode 'start=-10m'
 ```
+
+## ラベルを付与する
+
+```go
+func addGaugePoint(
+	gauge pmetric.Gauge,
+	timestamp pcommon.Timestamp,
+	value float64,
+	siteID string,
+	targetID string,
+	position string,
+) {
+	dp := gauge.DataPoints().AppendEmpty()
+
+	dp.SetTimestamp(timestamp)
+	dp.SetDoubleValue(value)
+
+	attrs := dp.Attributes()
+	attrs.PutStr("site_id", siteID)
+	attrs.PutStr("target_id", targetID)
+	attrs.PutStr("measurement_position", position)
+}
+```
+
+例えば、こういうシリーズを登録してみる。
+
+```go
+
+  // temperature_celsius
+	temp := sm.Metrics().AppendEmpty()
+	temp.SetName("temperature_celsius")
+	temp.SetDescription("Dummy temperature")
+	temp.SetUnit("Cel")
+
+	tempGauge := temp.SetEmptyGauge()
+
+	addGaugePoint(
+		tempGauge, now, dummyValue(100, counter),
+		"site-a", "plc-01", "room-1",
+	)
+
+	addGaugePoint(
+		tempGauge, now, dummyValue(200, counter),
+		"site-a", "plc-01", "room-2",
+	)
+
+	addGaugePoint(
+		tempGauge, now, dummyValue(300, counter),
+		"site-b", "plc-02", "room-1",
+	)
+
+```
+
+`temperature_celsius`を引いてみる。
+```sh
+curl -sG 'http://vm:8428/api/v1/export' \
+  --data-urlencode 'match[]=temperature_celsius' \
+  --data-urlencode 'start=-5m' \
+  --data-urlencode 'end=now' | jq
+```
+```sh
+curl -sG 'http://vm:8428/api/v1/export' \
+  --data-urlencode 'match[]=temperature_celsius{site_id="site-a"}' \
+  --data-urlencode 'start=-5m' \
+  --data-urlencode 'end=now' | jq
+```
+```sh
+curl -sG 'http://vm:8428/api/v1/export' \
+  --data-urlencode 'match[]=temperature_celsius{measurement_position="room-2"}' \
+  --data-urlencode 'start=-5m' \
+  --data-urlencode 'end=now' | jq
+```
+```sh
+curl -sG 'http://vm:8428/api/v1/export' \
+  --data-urlencode 'match[]=temperature_celsius{site_id="site-a",measurement_position="room-2"}' \
+  --data-urlencode 'start=-5m' \
+  --data-urlencode 'end=now' | jq
+```

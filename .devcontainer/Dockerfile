@@ -12,6 +12,7 @@ RUN set -x \
     vim \
     curl \
     ca-certificates \
+    jq \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
