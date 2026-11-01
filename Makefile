@@ -4,6 +4,8 @@ DIST_NAME := ./dist/otelcol-practice
 VERSION := 0.1.0
 
 test:
+	go mod tidy
+	go fmt ./...
 	go test ./...
 
 build: test build-amd64 build-arm64
